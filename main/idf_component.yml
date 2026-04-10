@@ -1,0 +1,26 @@
+version: 0.1.0
+dependencies:
+  iot_usbh_ecm:
+    version: "^0.2.1"
+  iot_usbh_rndis:
+    version: "^0.3.1"
+  espressif/iot_eth:
+    version: "^1.0.0"
+  espressif/modem_at:
+    version: "^0.1.0"
+  zorxx/neopixel:
+    version: "^1.0.10"
+  espressif/max17048:
+    version: "^0.1.2"
+  espressif/esp32-camera:
+    version: "^2.1.6"
+  espressif/cjson:
+    version: "^1.7.19~2"
+  esp-idf-lib/esp_idf_lib_helpers:
+    version: '^1.4.0'
+  espressif/usb:
+    version: "^1.4.0"
+  espressif/ds18b20:
+    version: "^0.3.0"
+  espressif/onewire_bus:
+    version: "^1.1.0"

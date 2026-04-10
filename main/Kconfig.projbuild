@@ -1,0 +1,362 @@
+menu "WaveShare ESP32-S3 SIM7670 4G AIS/ADSB Configuration"
+    config MODE_RNDIS
+        bool "enable RNDIS and disable ECM Mode"
+        default n
+        help
+            Switch initialisation of ECM or RNDIS driver and mode.
+            Hint: The GSM module needs to be switched manually via AT. There is no code here to do that for you.
+    menu "Pin definition"
+            config NEOPIXEL_PIN
+            int "Neopixel (RGB) Pin"
+            range 0 99
+            default 38
+            help
+                Pin for WS2812B RGB Led.
+            config AIS_RX_PIN
+            int "AIS RX Pin"
+            range 0 99
+            default 3
+            help
+                Pin for AIS RX Data.
+            config AIS_RESET_PIN
+            int "AIS Reset Pin"
+            range 0 99
+            default 2
+            help
+                Pin for AIS Module Reset (Low=Reset).
+            config GSM_POWER_PIN
+            int "GSM Power Pin"
+            range 0 99
+            default 21
+            help
+                Pin for GSM Module Power via Power Control Unit. (Low=Off)
+            config CAM_POWER_PIN
+            int "CAM Power Pin"
+            range 0 99
+            default 44
+            help
+                Pin for Camera Module Power via Power Control Unit. (Low=Off)
+            config ONEWIRE_GPIO_NUM
+            int "OneWire Pin"
+            range 0 99
+            default 1
+            help
+                Pin for DS18B20 OneWire Bus.
+            config ADSB_RX_PIN
+            int "ADSB RX Pin"
+            range 0 99
+            default 4
+            help
+                Pin for ADSB RX Data.
+            config ADSB_RTS_PIN
+            int "ADSB RTS Pin"
+            range 0 99
+            default 5
+            help
+                Pin for ADSB RTS Hardware flow control Pin.
+            config ADSB_RESET_PIN
+            int "ADSB Reset Pin"
+            range 0 99
+            default 6
+            help
+                Pin for ADSB Module Reset (Low=Reset).
+
+    endmenu
+    menu "Default Bootup Config Settings"
+        comment "All Default System Settings"
+            choice SYSCONFIG_LOGLEVEL
+                prompt "UDP Loglevel"
+                default LOG_DEBUG
+                config LOG_NONE
+                    bool "None"
+                config LOG_ERROR
+                    bool "Error"
+                config LOG_WARN
+                    bool "Warn"
+                config LOG_INFO
+                    bool "Info"
+                config LOG_DEBUG
+                    bool "Debug"
+                help
+                    Default UDP Loglevel to send. From None to Debug
+            endchoice
+            config SYSCONFIG_LOGLEVEL
+                int
+                default 4 if LOG_DEBUG
+                default 3 if LOG_INFO
+                default 2 if LOG_WARN
+                default 1 if LOG_ERROR
+                default 0 if LOG_NONE  
+            config SYSCONFIG_LOGIP
+                string "UDP Log Destination IP"
+                default "192.192.192.192"
+                help
+                    Destination IP for UDP Logging.
+                    Hint: NO HOST. Just IP.
+            config SYSCONFIG_LOGPORT
+                int "UDP Log Destination Port"
+                range 1 65535
+                default 12345
+                help
+                    Destination Port for the UDP Logging.
+            config SYSCONFIG_GPS
+                bool "enable GPS"
+                default n
+                help
+                    Enable GPS on Boot (not recommended)
+            config SYSCONFIG_CAM
+                bool "enable Camera"
+                default n
+                help
+                    Enable Camera on Boot (not recommended)
+            config SYSCONFIG_CAM_INT
+                int "Cam Send Interval (ms)"
+                range 10000 99999999
+                default 60000
+                help
+                    Camera interval to send Images to Server. Value in miliseconds.
+            config SYSCONFIG_CAM_QUAL
+                int "Cam JPEG Quality"
+                range 0 63
+                default 40
+                help
+                    Camera JPEG compression quality. Higher value is less quality and less size.
+            config SYSCONFIG_ADSB
+                bool "enable ADSB"
+                default n
+                help
+                    Enable ADSB on Boot (not recommended)
+            config SYSCONFIG_ADSBIP
+                string "ADSB Destination IP"
+                default "192.192.192.192"
+                help
+                    Destination IP for ADSB Data.
+                    Hint: NO HOST. Just IP.
+            config SYSCONFIG_ADSBPORT
+                int "ADSB Destination Port"
+                range 1 65535
+                default 12344
+                help
+                    Destination Port for ADSB data.
+            config SYSCONFIG_ADSB_SQ
+                bool "ADSB Send Squitter"
+                default n
+                help
+                    Send or Filter ADSB Mode S squitter messages.
+            config SYSCONFIG_ADSB_SQEXT
+                bool "ADSB Send extended Squitter"
+                default n
+                help
+                    Send or Filter ADSB Mode S extended squitter messages.
+            config SYSCONFIG_ADSB_MODEAC
+                bool "ADSB Send MODE AC"
+                default n
+                help
+                    Send or Filter ADSB Mode A/C messages.
+                    This Messages have no position, only height and other codes. So mostly not needed.
+            config SYSCONFIG_AIS
+                bool "enable AIS"
+                default n
+                help
+                    Enable AIS on Boot (not recommended)
+            config SYSCONFIG_AISIP
+                string "AIS Destination IP"
+                default "192.192.192.192"
+                help
+                    Destination IP for AIS data.
+                    Hint: NO HOST. Just IP.
+            config SYSCONFIG_AISPORT
+                int "AIS Destination Port"
+                range 1 65535
+                default 12346
+                help
+                    Destination Port for AIS data.
+            config SYSCONFIG_AISMINDIST
+                int "AIS Minimum Distance"
+                default 0
+                help
+                    Minimum distance to send AIS data from if GPS position is available.
+                    This is to blank out local senders to only transmit long distance receptions.
+                    Value in meter. 0 is okay.
+            config SYSCONFIG_LED
+                bool "enable RGB-LED"
+                default y
+                help
+                    Enable RGB-LED on Boot. Just floats through color wheel.
+                    Runtime-Enabled in Firmware Update Task.
+            config SYSCONFIG_UPDATEINT
+                int "Config Update Interval (ms)"
+                range 10000 99999999
+                default 30000
+                help
+                    Config/Stats exchange interval with Server. Value in miliseconds.
+            config SYSCONFIG_DS18B20
+                bool "enable DS18B20"
+                default n
+                help
+                    Enable DS18B20 temperature sensor on Boot.
+            config SYSCONFIG_DS18B20_INT
+                int "DS18B20 Update Interval (ms)"
+                range 10000 99999999
+                default 10000
+                help
+                    Query interval for DS18B20 sensors. Value in miliseconds.         
+    endmenu
+    menu "Power Settings"
+        config SYSCONFIG_BOOT_BATLEVEL
+                int "BOOT min Bat level"
+                range 0 100
+                default 30
+                help
+                    Battery level at which system boot is halted until charged enough.
+        config SYSCONFIG_GSM_BATLEVEL
+                int "GSM min Bat level"
+                range 0 100
+                default 10
+                help
+                    Battery level at which GSM is kept disabled to preserve power.
+        config SYSCONFIG_CAM_BATLEVEL
+                int "Cam min Bat level"
+                range 0 100
+                default 50
+                help
+                    Battery level at which the camera is kept disabled to preserve power.
+        config SYSCONFIG_GPS_BATLEVEL
+                int "GPS min Bat level"
+                range 0 100
+                default 70
+                help
+                    Battery level at which GPS is kept disabled to preserve power.
+        config SYSCONFIG_AIS_BATLEVEL
+                int "AIS min Bat level"
+                range 0 100
+                default 50
+                help
+                    Battery level at which AIS is kept disabled to preserve power.
+        config SYSCONFIG_ADSB_BATLEVEL
+                int "ADSB min Bat level"
+                range 0 100
+                default 50
+                help
+                    Battery level at which ADSB is kept disabled to preserve power.
+     endmenu
+    menu "NMEA Settings"
+        comment "All NMEA specific settings"
+        config NMEA_PARSER_UART_RXD
+            int "NMEA GPS->ESP32 RXD pin number"
+            range 0 99
+            default 17
+            help
+                Pin for SIM7670 GPS (NMEA) to ESP32 Communication.
+
+        config NMEA_PARSER_RING_BUFFER_SIZE
+            int "NMEA Parser Ring Buffer Size"
+            range 0 2048
+            default 1024
+            help
+                Size of the ring buffer used for NMEA Rx channel.
+
+        config NMEA_PARSER_TASK_STACK_SIZE
+            int "NMEA Parser Task Stack Size"
+            range 0 4096
+            default 3072
+            help
+                Stack size of NMEA Parser task.
+
+        config NMEA_PARSER_TASK_PRIORITY
+            int "NMEA Parser Task Priority"
+            range 0 24
+            default 2
+            help
+                Priority of NMEA Parser task.
+
+        menu "NMEA Statement Settings"
+            comment "At least one statement must be selected"
+            config NMEA_STATEMENT_GGA
+                bool "GGA Statement"
+                default y
+                help
+                    Enabling this option will parse the following parameter from GGA statement:
+
+                    - Latitude, Longitude, Altitude;
+                    - Number of satellites in use, fix status (no fix, GPS, DGPS), UTC time;
+
+            config NMEA_STATEMENT_GSA
+                bool "GSA Statement"
+                default y
+                help
+                    Enabling this option will parse the following parameter from GSA statement:
+
+                    - Position/Vertical/Horizontal dilution of precision;
+                    - Fix mode (no fix, 2D, 3D fix);
+                    - IDs of satellites in use;
+
+            config NMEA_STATEMENT_GSV
+                bool "GSV Statement"
+                default y
+                help
+                    Enabling this option will parse the following parameter from GSV statement:
+
+                    - Number of satellites in view;
+                    - Optional details of each satellite in view;
+
+            config NMEA_STATEMENT_RMC
+                bool "RMC Statement"
+                default y
+                help
+                    Enabling this option will parse the following parameter from RMC statement:
+
+                    - Validity of GPS signal;
+                    - Ground speed (knots) and course over ground (degrees);
+                    - Magnetic variation;
+                    - UTC date;
+
+            config NMEA_STATEMENT_GLL
+                bool "GLL Statement"
+                default y
+                help
+                    Enabling this option will parse the following parameter from GLL statement:
+
+                    - Latitude, Longitude;
+                    - UTC time;
+
+            config NMEA_STATEMENT_VTG
+                bool "VTG Statement"
+                default y
+                help
+                    Enabling this option will parse the following parameter from VTG statement:
+
+                    - Ground speed (knots, km/h) and course over ground (degrees);
+                    - Magnetic variation;
+
+        endmenu
+    endmenu
+    menu "OTA update settings"
+        config FIRMWARE_UPG_URL
+            string "Firmware Upgrade URL"
+            default "https://192.168.2.106:8070/hello_world.bin"
+            help
+                URL of server which hosts the firmware image.
+
+        config OTA_RECV_TIMEOUT
+            int "OTA Receive Timeout"
+            default 5000
+            help
+                Maximum time for reception
+
+    endmenu
+    menu "Config Refresh Settings"
+        config SYNC_SERVER_URL
+            string "Stats/Config URL"
+            default "https://192.168.2.106:8070/config.php"
+            help
+                URL of server where the Status is send to and config is received from.
+    endmenu
+    menu "Camera Settings"
+        config UPLOAD_SERVER_URL
+            string "Image upload URL"
+            default "https://192.168.2.106:8070/upload.php"
+            help
+                URL of server where the camera image is uploaded to.
+    endmenu
+endmenu

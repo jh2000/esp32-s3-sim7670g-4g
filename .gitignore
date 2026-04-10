@@ -1,0 +1,10 @@
+.vscode
+build
+sdkconfig
+old
+dependencies.lock
+*.new
+*.old
+version.bat
+managed_components
+
